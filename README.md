@@ -138,7 +138,7 @@ We recommend using Daily timeframe data. Hourly or minute-level data may cause b
 
 A separate, detailed naming convention and extension guide will be uploaded later.
 
-## 1.**免责声明 / Disclaimer:** 
+## **免责声明 / Disclaimer:** 
 
 本工具仅供研究学习使用，**不构成任何投资或财务建议**。开发者及贡献者对因使用本软件或其中代码所造成的任何直接或间接财务损失，不承担任何法律责任。金融市场交易具有极高风险，请在真实交易前进行充分测试，并自行承担所有风险 (DYOR)。
 
