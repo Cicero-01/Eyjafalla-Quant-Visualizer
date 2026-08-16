@@ -22,21 +22,33 @@ EMOJI_CONFIGS = [
 # 📍 图层1：基础K线图层 （高开低收）
 # 📍 Layer1: Basic K lines (OHLC)
 def _add_kline_layer(fig, df):
+    has_ohlc = all(col in df.columns for col in ['Open', 'High', 'Low', 'Close'])
+    
+    if has_ohlc:
+        fig.add_trace(go.Candlestick(
+            x=df['Open Time'],
+            open=df['Open'], high=df['High'],
+            low=df['Low'], close=df['Close'],
+            name="K line (OHLC)",
+            increasing_line_color='#26A69A',
+            decreasing_line_color='#EF5350'
+        ), row=1, col=1)
+    else:
+        price_col = 'Close' if 'Close' in df.columns else df.columns[1] 
 
-    fig.add_trace(go.Candlestick(
-        x=df['Open Time'],
-        open=df['Open'], high=df['High'],
-        low=df['Low'], close=df['Close'],
-        name="K line (OHLC)",
-        increasing_line_color='#26A69A',
-        decreasing_line_color='#EF5350'
-    ), row=1, col=1)
-
+        fig.add_trace(go.Scatter(
+            x=df['Open Time'],
+            y=df[price_col],
+            mode='lines',
+            name="OF",
+            line=dict(color='#EF5350', width=2)
+        ), row=1, col=1)
+        
 # 📍 图层2：可选-技术指标图层
 # 📍 Layer2: Techinal indicators (optional)
 def _add_technical_indicators(fig, df):
 
-    ma_cols = [c for c in df.columns if c.startswith(('MA5', 'Weekly_MA20'))]
+    ma_cols = [c for c in df.columns if c.startswith(('MA', 'Weekly_MA'))]
     # 选择要显示的指标（确保featurestore.csv中有对应的列）
     # Select the indicators to be shown (make sure the certain columns exist in the featurestore.csv )
 
@@ -134,15 +146,31 @@ def _add_strategy_layers(fig, trades_list):
 # 📍 图层4：可选-市场状态背景图层
 # 📍 Layer4: Market State (Chaos or Order) (optional)
 def _add_hmm_background(fig, df):
-    if 'Market State' not in df.columns:
+    state_col = None
+    state_colors = {}
+
+    if 'Market State' in df.columns:
+        state_col = 'PRTS_State_Shift'
+        state_colors = {0: 'rgba(244, 67, 54, 0.12)', 1: 'rgba(76, 175, 80, 0.12)'}
+        print("  └─ [图层] 渲染2色背景色块...")
+
+    elif 'Swing State' in df.columns:  
+        state_col = 'Swing_State'
+       
+        state_colors = {
+            1: 'rgba(76, 175, 80, 0.12)',  
+            2: 'rgba(244, 67, 54, 0.12)',  
+            0: 'rgba(158, 158, 158, 0.12)'  
+        }
+        print("  └─ [图层] 渲染3色背景色块...")
+
+    if not state_col:
         return
 
-    print("  └─ [图层] 渲染背景色块...")
-    state_colors = {0: 'rgba(244, 67, 54, 0.12)', 1: 'rgba(76, 175, 80, 0.12)'}
-    df['state_block'] = (df['Market State'] != df['Market State'].shift()).cumsum()
+    df['state_block'] = (df[state_col] != df[state_col].shift()).cumsum()
 
     for _, block in df.groupby('state_block'):
-        st_val = block['Market State'].iloc[0]
+        st_val = block[state_col].iloc[0]
         if st_val in state_colors:
             fig.add_vrect(
                 x0=str(block['Open Time'].iloc[0]), x1=str(block['Open Time'].iloc[-1]),
