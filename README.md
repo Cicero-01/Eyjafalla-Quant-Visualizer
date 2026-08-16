@@ -56,6 +56,15 @@ In addition to K-line data and indicators, the tool can simultaneously display N
 | `High`      | 最高价/ High price                    | `float`      |
 | `Low`       | 最低价/ Low price                     | `float`      |
 
+如您研究的对象为一些公募基金（OF），可能会遇到只有每日净值的情况。您只需在"Open Time"列后直接创建"Close"列，在其中填入对应交易日净值即可，如：
+
+If you are working with publicly offered funds (OFs), you may encounter datasets that only provide daily NAV data. In this case, simply create a "Close" column after the "Open Time" column and enter the corresponding NAV for each trading day, as shown below:
+
+| Open Time | Close | 
+| --------- | ---- | 
+|           |      | 
+
+
 #### 技术指标 / Technical Indicators
 
 技术指标放在K线列的后面，如：
@@ -75,6 +84,29 @@ These indicator columns are optional. Missing indicator data will not affect the
 若需要添加其他指标，可以在`/tools/mod_Eyjafalla.py`中的Layer2函数` _add_technical_indicators(fig, df)`下进行添加。
 
 If you need to add custom indicators, you can modify the `_add_technical_indicators(fig, df)` function in `/tools/mod_Eyjafalla.py`.
+
+#### 市场状态 / Market State
+
+*Eyjafalla*能自动识别feature_store.csv中的状态列，并进行分色绘制。
+
+*Eyjafalla* automatically detects market state columns in feature_store.csv and displays different market states using color-coded regions.
+
+如果将市场分为2种状态，请将列名命名为"Market State"(`0/1`)；如您使用经典道氏理论等方法将市场分为3状态，请将列命名为"Swing State"(`0/1/2`)，如：
+
+If you classify the market into two states, name the column "Market State" (`0/1`). If you use methods such as the classical Dow Theory to classify the market into three states, name the column "Swing State" (`0/1/2`), as shown below:
+
+| Open Time | ……  | Low | MA5 | Weekly_MA20 | BOLL_UB | …… | Market State |
+| --------- | --- | --- | --- | ----------- | ------- | ------- | ------- |
+|           | ……  |     |     |             |         |  ……       |         |
+
+请遵循 Please follow：
+
+| 列名 / Column | 说明 / Description                   | 数据类型 / Type  |
+| ----------- | ---------------------------------- | ------------ |
+| `Market State` | 2状态 / 2 State | `0/1` |
+| `Swing State`  | 3状态 / 3 State | `0/1/2`      |
+
+
 
 ### 2.账户净值 / Net Asset Value  （nav.csv）
 
