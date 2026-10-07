@@ -149,13 +149,13 @@ def _add_hmm_background(fig, df):
     state_col = None
     state_colors = {}
 
-    if 'Market State' in df.columns:
-        state_col = 'PRTS_State_Shift'
+    if 'State_Two' in df.columns:
+        state_col = 'State_Two'
         state_colors = {0: 'rgba(244, 67, 54, 0.12)', 1: 'rgba(76, 175, 80, 0.12)'}
         print("  └─ [图层] 渲染2色背景色块...")
 
-    elif 'Swing State' in df.columns:  
-        state_col = 'Swing_State'
+    elif 'State_Three' in df.columns:  
+        state_col = 'State_Three'
        
         state_colors = {
             1: 'rgba(76, 175, 80, 0.12)',  
@@ -167,13 +167,23 @@ def _add_hmm_background(fig, df):
     if not state_col:
         return
 
+    if len(df) > 1:
+        time_step = df['Open Time'].iloc[1] - df['Open Time'].iloc[0]
+    else:
+        time_step = pd.Timedelta(days=1) 
+
+    half_step = time_step / 2  
+
     df['state_block'] = (df[state_col] != df[state_col].shift()).cumsum()
 
     for _, block in df.groupby('state_block'):
         st_val = block[state_col].iloc[0]
         if st_val in state_colors:
+            t_start = block['Open Time'].iloc[0] - half_step
+            t_end = block['Open Time'].iloc[-1] + half_step
+
             fig.add_vrect(
-                x0=str(block['Open Time'].iloc[0]), x1=str(block['Open Time'].iloc[-1]),
+                x0=str(t_start), x1=str(t_end),
                 fillcolor=state_colors[st_val], opacity=1.0, layer="below", line_width=0,
                 row="all", col="all"
             )
