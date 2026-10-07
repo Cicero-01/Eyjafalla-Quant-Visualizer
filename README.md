@@ -91,9 +91,9 @@ If you need to add custom indicators, you can modify the `_add_technical_indicat
 
 *Eyjafalla* automatically detects market state columns in feature_store.csv and displays different market states using color-coded regions.
 
-如果将市场分为2种状态，请将列名命名为"Market State"(`0/1`)；如您使用经典道氏理论等方法将市场分为3状态，请将列命名为"Swing State"(`0/1/2`)，如：
+如果将市场分为2种状态，请将列名命名为"State_2"(`0/1`)；如您使用经典道氏理论等方法将市场分为3状态，请将列命名为"State_3"(`0/1/2`)，如：
 
-If you classify the market into two states, name the column "Market State" (`0/1`). If you use methods such as the classical Dow Theory to classify the market into three states, name the column "Swing State" (`0/1/2`), as shown below:
+If you classify the market into two states, name the column "State_2" (`0/1`). If you use methods such as the classical Dow Theory to classify the market into three states, name the column "State_3" (`0/1/2`), as shown below:
 
 | Open Time | ……  | Low | MA5 | Weekly_MA20 | BOLL_UB | …… | Market State |
 | --------- | --- | --- | --- | ----------- | ------- | ------- | ------- |
@@ -103,8 +103,8 @@ If you classify the market into two states, name the column "Market State" (`0/1
 
 | 列名 / Column | 说明 / Description                   | 数据类型 / Type  |
 | ----------- | ---------------------------------- | ------------ |
-| `Market State` | 2状态 / 2 State | `0/1` |
-| `Swing State`  | 3状态 / 3 State | `0/1/2`      |
+| `State_2` | 2状态 / 2 State | `0/1` |
+| `State_3`  | 3状态 / 3 State | `0/1/2`      |
 
 
 
